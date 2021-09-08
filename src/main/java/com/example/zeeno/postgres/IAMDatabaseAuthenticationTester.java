@@ -34,11 +34,11 @@ public class IAMDatabaseAuthenticationTester {
     private static final String DB_USER = "test_user";
     private static final String JDBC_URL = "jdbc:postgresql://" + RDS_INSTANCE_HOSTNAME + ":" + RDS_INSTANCE_PORT + "/test_database";
 
-    private static final String SSL_CERTIFICATE = "rds-ca-2019-us-west-2.pem";
+    private static final String SSL_CERTIFICATE = "cert.pem";
 
     private static final String KEY_STORE_TYPE = "JKS";
     private static final String KEY_STORE_PROVIDER = "SUN";
-    private static final String KEY_STORE_FILE_PREFIX = "sys-connect-via-ssl-test-cacerts";
+    private static final String KEY_STORE_FILE_PREFIX = "cacerts";
     private static final String KEY_STORE_FILE_SUFFIX = ".jks";
     private static final String DEFAULT_KEY_STORE_PASSWORD = "changeit";
 
@@ -48,7 +48,7 @@ public class IAMDatabaseAuthenticationTester {
 
         //verify the connection is successful
         Statement stmt= connection.createStatement();
-        ResultSet rs=stmt.executeQuery("SELECT 'Success!' AS result;");
+        ResultSet rs=stmt.executeQuery("SELECT 'Success!! DATABASE IS CONNECTED!' AS result;");
         while (rs.next()) {
             String id = rs.getString(1);
             System.out.println(id); //Should print "Success!"
@@ -59,6 +59,8 @@ public class IAMDatabaseAuthenticationTester {
         connection.close();
 
         clearSslProperties();
+
+        System.exit(0);
 
     }
 
@@ -79,8 +81,8 @@ public class IAMDatabaseAuthenticationTester {
      */
     private static Properties setMySqlConnectionProperties() {
         Properties mysqlConnectionProperties = new Properties();
-        mysqlConnectionProperties.setProperty("verifyServerCertificate","false");
-        mysqlConnectionProperties.setProperty("useSSL", "false");
+        mysqlConnectionProperties.setProperty("verifyServerCertificate","true");
+        mysqlConnectionProperties.setProperty("useSSL", "true");
         mysqlConnectionProperties.setProperty("user",DB_USER);
         mysqlConnectionProperties.setProperty("password",generateAuthToken());
         return mysqlConnectionProperties;

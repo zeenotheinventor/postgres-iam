@@ -1,5 +1,6 @@
 package com.example.zeeno.postgres.domains.debug;
 
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.example.zeeno.postgres.auth.GenerateRDSAuthToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -25,6 +26,11 @@ public class DebugController {
         String hostname = env.getProperty("aws.hostname");
         String port = env.getProperty("aws.port");
         String username = env.getProperty("aws.username");
+
+        DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();
+
+        variables.put("accessKey", chain.getCredentials().getAWSAccessKeyId());
+        variables.put("secretKey", chain.getCredentials().getAWSSecretKey());
 
         String token = GenerateRDSAuthToken.generateAuthToken(region, hostname, port, username);
         variables.put("rdsToken", token);
